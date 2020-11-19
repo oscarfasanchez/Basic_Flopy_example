@@ -21,6 +21,14 @@ L = 400
 H = 50
 k = 1.0
 
+
+# creating the simulation
+
 sim = flopy.mf6.MFSimulation(
     sim_name = name, exe_name="mf6", version="mf6",
     sim_ws="C:/WRDAPP/mf6.2.0/bin")
+
+# Creating the temporal discretization
+tdis = flopy.mf6.ModflowTdis(sim, pname="tdis",
+                             time_units="DAYS"
+                             , nper=1, perioddata=[(1,1,1)])
