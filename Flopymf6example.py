@@ -12,7 +12,7 @@ import flopy
 
 
 #parameters
-name = "tutorial01_mf6"
+name = "tuto01_mf6"
 h1 = 100
 h2 = 90
 Nlay = 10 
@@ -25,8 +25,8 @@ k = 1.0
 # creating the simulation
 
 sim = flopy.mf6.MFSimulation(
-    sim_name = name, exe_name="mf6", version="mf6",
-    sim_ws="C:/WRDAPP/mf6.2.0/bin")
+    sim_name = name, exe_name="C:/WRDAPP/mf6.2.0/bin/mf6", version="mf6",
+    sim_ws=".")
 
 # Creating the temporal discretization
 tdis = flopy.mf6.ModflowTdis(sim, pname="tdis",
@@ -59,11 +59,54 @@ ic = flopy.mf6.ModflowGwfic(gwf, pname="ic", strt=start )
 
 
 # celltype 1 are unconfined thickness
-flopy.mf6.ModflowGwfnpf( gwf, icelltype=1, k=k, save_flows=True)
+flopy.mf6.ModflowGwfnpf( gwf, icelltype=1, k=k,
+                        save_flows=True)
+
+
+# Creating boundary conditions
+
+# Creating constat head package
+
+chd_rec=[]
+chd_rec.append(((0 , int(N / 4),int(N / 4)), h2))
+for layer in range(0, Nlay):
+    for row_col in range(0, N):
+        chd_rec.append(((layer, row_col, 0), h1))
+        chd_rec.append(((layer, row_col, N - 1), h1))
+        if row_col !=0 and row_col!= N - 1:
+            chd_rec.append(((layer, 0, row_col), h1))
+            chd_rec.append(((layer, N - 1, row_col), h1))
+
+chd = flopy.mf6.ModflowGwfchd(gwf, maxbound=len(chd_rec), 
+                              stress_period_data=chd_rec,
+                              save_flows=True)
+
+# For looking the chd array
+
+iper = 0
+ra = chd.stress_period_data.get_data(key=iper)
+print(ra)
 
 
 
 
+# creating output control file OC
 
+headfile = f"{name}.hds"
+head_filerecord = [headfile]
+budgetfile = f"{name}.cbb"
+budget_filerecord = [budgetfile]
+saverecord = [("HEAD", "ALL"), ("BUDGET", "ALL")]
+printrecord = [("HEAD", "LAST")]
+oc = flopy.mf6.ModflowGwfoc(gwf, saverecord=saverecord,
+                            head_filerecord=head_filerecord
+                            , budget_filerecord=budget_filerecord,
+                            printrecord=printrecord)
 
-ic = flopy.mf6.ModflowGwfnpf(gwf, icelltype=1, k=k, save_flows=True)
+# create the model
+sim.write_simulation()
+
+# run the simulation
+success, buff= sim.run_simulation()
+if not success:
+    raise Exception("MODFLOW 6 did not terminate normally.")
