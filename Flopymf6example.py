@@ -73,14 +73,14 @@ flopy.mf6.ModflowGwfnpf( gwf, icelltype=1, k=k,
 # Creating constat head package
 
 chd_rec=[]
-chd_rec.append(((5 , int(3*N / 4),int(N / 4)), h2))
+chd_rec.append(((1 , int(3*N / 4),int(N / 4)), h2))
 for layer in range(0, Nlay):
     for row_col in range(0, N):
         chd_rec.append(((layer, row_col, 0), h1))
         chd_rec.append(((layer, row_col, N - 1), h1))
         if row_col !=0 and row_col!= N - 1:
-            chd_rec.append(((layer, 0, row_col), h2))
-            chd_rec.append(((layer, N - 1, row_col), h2))
+            chd_rec.append(((layer, 0, row_col), h1))
+            chd_rec.append(((layer, N - 1, row_col), h1))
 
 chd = flopy.mf6.ModflowGwfchd(gwf, maxbound=len(chd_rec), 
                               stress_period_data=chd_rec,
@@ -134,7 +134,7 @@ plt.clabel(c, fmt="%2.1f")
 z = np.linspace(-H/Nlay, -H,  Nlay) #prueba oscar
 fig = plt.figure(figsize=(5, 2.5))
 ax = fig.add_subplot(1, 1, 1, aspect="auto")
-c = ax.contour(x, z , h[:, 30, :], np.arange(0, 100, 0.2), colors="black")#take care about the cell number, not distance!
+c = ax.contour(x, z , h[:,int( 3*N/4), :], np.arange(0, 100, 0.2), colors="black")#take care about the cell number, not distance!
 plt.clabel(c, fmt="%1.1f")
 
 
