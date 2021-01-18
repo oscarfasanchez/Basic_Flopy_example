@@ -9,7 +9,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import flopy
-
+# import flopy.plot.plotmap
 
 #parameters
 
@@ -129,6 +129,19 @@ c=ax.contour(x, y, h[0], np.arange(90, 100.1, 0.2), colors="black")
 plt.clabel(c, fmt="%2.1f")
 
 
+# Plot map layer 10
+# import results
+hds = flopy.utils.binaryfile.HeadFile(headfile)
+# Take from first stress period
+h = hds.get_data(kstpkper=(0,0))
+# create the mesh for the graph
+x = y = np.linspace(0 , L, N)
+fig = plt.figure(figsize=(6,6))
+ax=fig.add_subplot(1,1,1, aspect="equal")
+c=ax.contour(x, y, h[9], np.arange(90, 100.1, 0.2), colors="black")
+plt.clabel(c, fmt="%2.1f")
+
+
 # plot a cross section along a row
 # z = np.linspace(-H / Nlay /2, -H + H/ Nlay / 2,  Nlay)
 z = np.linspace(-H/Nlay, -H,  Nlay) #prueba oscar
@@ -137,6 +150,7 @@ ax = fig.add_subplot(1, 1, 1, aspect="auto")
 c = ax.contour(x, z , h[:,int( 3*N/4), :], np.arange(0, 100, 0.2), colors="black")#take care about the cell number, not distance!
 plt.clabel(c, fmt="%1.1f")
 
-
+# using pltmapview capabilities
    
+
     
