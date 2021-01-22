@@ -64,7 +64,7 @@ ic = flopy.mf6.ModflowGwfic(gwf, pname="ic", strt=start )
 
 # celltype 1 are unconfined thickness
 flopy.mf6.ModflowGwfnpf( gwf, icelltype=1, k=k,
-                        save_flows=True)
+                        save_flows=True,save_specific_discharge=True)
 
 
 # Creating boundary conditions
@@ -101,7 +101,7 @@ head_filerecord = [headfile]
 budgetfile = f"{name}.bud"
 budget_filerecord = [budgetfile]
 saverecord = [("HEAD", "ALL"), ("BUDGET", "ALL")]
-printrecord = [("BUDGET", "LAST")]
+printrecord = [("HEAD", "LAST")]
 oc = flopy.mf6.ModflowGwfoc(gwf, saverecord=saverecord,
                             head_filerecord=head_filerecord
                             , budget_filerecord=budget_filerecord,
@@ -154,4 +154,7 @@ plt.clabel(c, fmt="%1.1f")
 bud = flopy.utils.CellBudgetFile(budgetfile, precision="double")
 spdis = bud.get_data(text='DATA-SPDIS')[0]
 pmv=flopy.plot.PlotMapView(gwf)
+pmv.plot_grid(colors='white')
+pmv.contour_array(h, levels=[.2, .4, .6, .8], linewidths=3.)
+pmv.plot_specific_discharge(spdis, color='black')
 
