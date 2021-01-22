@@ -9,7 +9,6 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import flopy
-# import flopy.plot.plotmap
 
 #parameters
 
@@ -99,10 +98,10 @@ print(ra)
 
 headfile = f"{name}.hds"
 head_filerecord = [headfile]
-budgetfile = f"{name}.cbb"
+budgetfile = f"{name}.bud"
 budget_filerecord = [budgetfile]
 saverecord = [("HEAD", "ALL"), ("BUDGET", "ALL")]
-printrecord = [("HEAD", "LAST")]
+printrecord = [("BUDGET", "LAST")]
 oc = flopy.mf6.ModflowGwfoc(gwf, saverecord=saverecord,
                             head_filerecord=head_filerecord
                             , budget_filerecord=budget_filerecord,
@@ -152,5 +151,7 @@ plt.clabel(c, fmt="%1.1f")
 
 # using pltmapview capabilities
    
+bud = flopy.utils.CellBudgetFile(budgetfile, precision="double")
+spdis = bud.get_data(text='DATA-SPDIS')[0]
+pmv=flopy.plot.PlotMapView(gwf)
 
-    
