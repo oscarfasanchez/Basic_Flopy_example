@@ -150,7 +150,7 @@ c = ax.contour(x, z , h[:,int( 3*N/4), :], np.arange(0, 100, 0.2), colors="black
 plt.clabel(c, fmt="%1.1f")
 
 # using pltmapview capabilities
-   
+plt.figure()   
 bud = flopy.utils.CellBudgetFile(budgetfile, precision="double")
 spdis = bud.get_data(text='DATA-SPDIS')[0]
 pmv=flopy.plot.PlotMapView(gwf)
